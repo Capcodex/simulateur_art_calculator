@@ -11,10 +11,10 @@
     <!-- Colonne gauche : Formulaire -->
     <div class="form-section">
       <h1>Estimez le prix de votre œuvre</h1>
-      <p class="intro">Deux méthodes complémentaires : <strong>A</strong> (Coûts + Temps) et <strong>B</strong> (Surface × Multiplicateur). Le résultat est une <strong>estimation</strong>, à ajuster selon le contexte de vente.</p>
+      <p class="intro">Deux méthodes complémentaires : <strong>A</strong> (Coûts + Temps) et <strong>B</strong> (Surface × €/cm² par tranches). Le résultat est une <strong>estimation</strong>, à ajuster selon le contexte de vente.</p>
 
       <form id="artprice-form">
-        <!-- Bloc paramètres généraux -->
+        <!-- Paramètres généraux -->
         <h2 class="section-title">Paramètres généraux</h2>
         <div class="grid-2">
           <div class="form-group">
@@ -37,19 +37,10 @@
         </div>
         <div class="grid-2">
           <div class="form-group">
-            <label for="tvaActive">TVA</label>
+            <label for="tvaActive">TVA (moyenne)</label>
             <select id="tvaActive">
               <option value="non" selected>Non</option>
               <option value="oui">Oui</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="tvaTaux">Taux TVA</label>
-            <select id="tvaTaux">
-              <option value="0.2" selected>20%</option>
-              <option value="0.1">10%</option>
-              <option value="0.055">5.5%</option>
-              <option value="0">0%</option>
             </select>
           </div>
         </div>
@@ -62,24 +53,20 @@
             <input type="number" id="couts" min="0" step="0.01" placeholder="ex. 120" />
           </div>
           <div class="form-group">
-            <label for="multiMat">Multiplicateur matériaux <span title="Double le coût pour racheter les fournitures">ℹ️</span></label>
-            <select id="multiMat">
-              <option value="1.5">×1,5</option>
-              <option value="2" selected>×2</option>
-              <option value="2.5">×2,5</option>
-              <option value="3">×3</option>
-            </select>
-          </div>
-        </div>
-        <div class="grid-3">
-          <div class="form-group">
             <label for="tauxHoraire">Taux horaire</label>
             <select id="tauxHoraire">
               <option value="15">15</option>
               <option value="25" selected>25</option>
               <option value="50">50</option>
               <option value="80">80</option>
+              <option value="perso">Personnalisé</option>
             </select>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="form-group" id="blocTauxPerso" style="display:none">
+            <label for="tauxHorairePerso">Votre taux horaire (€/h)</label>
+            <input type="number" id="tauxHorairePerso" min="0" step="0.01" placeholder="ex. 32" />
           </div>
           <div class="form-group">
             <label for="heures">Heures passées</label>
@@ -90,18 +77,9 @@
             <input type="number" id="fraisFixes" min="0" step="0.01" placeholder="ex. 80" />
           </div>
         </div>
-        <div class="form-group">
-          <label for="marge">Marge / overhead (%)</label>
-          <select id="marge">
-            <option value="0">0%</option>
-            <option value="0.1">10%</option>
-            <option value="0.2" selected>20%</option>
-            <option value="0.3">30%</option>
-          </select>
-        </div>
 
         <!-- Méthode B -->
-        <h2 class="section-title">Méthode B — Surface × Multiplicateur</h2>
+        <h2 class="section-title">Méthode B — Surface × €/cm² (par tranches)</h2>
         <div class="grid-3">
           <div class="form-group">
             <label for="typeObjet">Type</label>
@@ -119,53 +97,62 @@
             <input type="number" id="largeur" min="0" step="0.1" placeholder="ex. 80" />
           </div>
         </div>
+
+        <!-- Bloc spécifique 3D -->
         <div class="grid-3" id="blocProfondeur" style="display:none">
           <div class="form-group">
             <label for="profondeur">Profondeur (cm)</label>
             <input type="number" id="profondeur" min="0" step="0.1" placeholder="ex. 30" />
           </div>
           <div class="form-group">
-            <label for="multCarriere">Multiplicateur carrière</label>
-            <input type="number" id="multCarriere3d" min="0" step="0.01" placeholder="€/cm³" />
+            <label for="multCarriere3d">Multiplicateur carrière (€/cm³)</label>
+            <input type="number" id="multCarriere3d" min="0" step="0.0001" placeholder="ex. 0.02" />
           </div>
         </div>
-        <div class="grid-3" id="blocCarre">
+
+        <!-- Bloc spécifique 2D -->
+        <div class="grid-3" id="bloc2d">
           <div class="form-group">
-            <label for="multCarriere">Multiplicateur carrière</label>
-            <input type="number" id="multCarriere" min="0" step="0.01" placeholder="€/cm² (ex. 1.5)" />
+            <label for="niveau2d">Niveau (2D)</label>
+            <select id="niveau2d">
+              <option value="">-- Choisir --</option>
+              <option value="emergent">Émergent (≈ 60% de la réf.)</option>
+              <option value="intermediaire">Intermédiaire (≈ 85% de la réf.)</option>
+              <option value="etabli">Établi (référence)</option>
+              <option value="perso">Personnalisé (€/cm²)</option>
+            </select>
+          </div>
+          <div class="form-group" id="blocMultPerso2d" style="display:none">
+            <label for="multPerso2d">Multiplicateur personnalisé (€/cm²)</label>
+            <input type="number" id="multPerso2d" min="0" step="0.01" placeholder="ex. 4.20" />
           </div>
           <div class="form-group">
-            <label for="medium">Médium</label>
+            <label for="medium">Médium (2D)</label>
             <select id="medium" title="Coef indicatif par médium">
               <option value="1">Huile / Acrylique (×1,0)</option>
               <option value="0.8">Aquarelle / Graphite (×0,8)</option>
               <option value="0.9">Photographie (×0,9)</option>
-              <option value="1.2">Sculpture (×1,2)</option>
             </select>
           </div>
           <div class="form-group">
-            <label for="encadrement">Encadrement / socle</label>
+            <label for="encadrement">Encadrement</label>
             <input type="number" id="encadrement" min="0" step="0.01" placeholder="ex. 120" />
           </div>
         </div>
 
-        <!-- Options d’édition (facultatif) -->
-        <h2 class="section-title">Édition (facultatif)</h2>
-        <div class="grid-3">
+        <!-- Édition simple -->
+        <h2 class="section-title">Édition</h2>
+        <div class="grid-2">
           <div class="form-group">
-            <label for="editionActive">Édition limitée ?</label>
-            <select id="editionActive">
-              <option value="non" selected>Non</option>
-              <option value="oui">Oui</option>
+            <label for="edition">Œuvre unique ou édition ?</label>
+            <select id="edition">
+              <option value="unique" selected>Unique</option>
+              <option value="limite">Édition limitée</option>
             </select>
           </div>
-          <div class="form-group">
-            <label for="editionTirage">Tirage total</label>
-            <input type="number" id="editionTirage" min="1" step="1" placeholder="ex. 8" />
-          </div>
-          <div class="form-group">
-            <label for="editionNumero">N° proposé</label>
-            <input type="number" id="editionNumero" min="1" step="1" placeholder="ex. 3" />
+          <div class="form-group" id="editionCountBlock" style="display:none">
+            <label for="nbExemplaires">Nombre total d’exemplaires</label>
+            <input type="number" id="nbExemplaires" min="2" step="1" placeholder="ex. 10" />
           </div>
         </div>
 
@@ -181,8 +168,8 @@
             <div id="outA"></div>
           </div>
           <div class="card">
-            <h3>Méthode B (Surface × Multiplicateur)</h3>
-            <p class="muted">Aligné marché par taille, médium et maturité de carrière.</p>
+            <h3>Méthode B (Surface × €/cm²)</h3>
+            <p class="muted">Aligné marché via tranches de surface « artiste estimé », ajusté par niveau.</p>
             <div id="outB"></div>
           </div>
           <div class="card highlight">
