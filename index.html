@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estimez le prix de votre œuvre</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Colonne gauche : Formulaire -->
+    <div class="form-section">
+      <h1>Estimez le prix de votre œuvre</h1>
+      <p class="intro">Deux méthodes complémentaires : <strong>A</strong> (Coûts + Temps) et <strong>B</strong> (Surface × Multiplicateur). Le résultat est une <strong>estimation</strong>, à ajuster selon le contexte de vente.</p>
+
+      <form id="artprice-form">
+        <!-- Bloc paramètres généraux -->
+        <h2 class="section-title">Paramètres généraux</h2>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="devise">Devise</label>
+            <select id="devise" required>
+              <option value="EUR">EUR (€)</option>
+              <option value="USD">USD ($)</option>
+              <option value="GBP">GBP (£)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="commission">Commission galerie</label>
+            <select id="commission" title="Pour préserver votre net, on ajuste le prix public en tenant compte de la commission">
+              <option value="0">0%</option>
+              <option value="0.3">30%</option>
+              <option value="0.4">40%</option>
+              <option value="0.5" selected>50%</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="tvaActive">TVA</label>
+            <select id="tvaActive">
+              <option value="non" selected>Non</option>
+              <option value="oui">Oui</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tvaTaux">Taux TVA</label>
+            <select id="tvaTaux">
+              <option value="0.2" selected>20%</option>
+              <option value="0.1">10%</option>
+              <option value="0.055">5.5%</option>
+              <option value="0">0%</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Méthode A -->
+        <h2 class="section-title">Méthode A — Coûts + Temps</h2>
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="couts">Coût des matériaux</label>
+            <input type="number" id="couts" min="0" step="0.01" placeholder="ex. 120" />
+          </div>
+          <div class="form-group">
+            <label for="multiMat">Multiplicateur matériaux <span title="Double le coût pour racheter les fournitures">ℹ️</span></label>
+            <select id="multiMat">
+              <option value="1.5">×1,5</option>
+              <option value="2" selected>×2</option>
+              <option value="2.5">×2,5</option>
+              <option value="3">×3</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="form-group">
+            <label for="tauxHoraire">Taux horaire</label>
+            <select id="tauxHoraire">
+              <option value="15">15</option>
+              <option value="25" selected>25</option>
+              <option value="50">50</option>
+              <option value="80">80</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="heures">Heures passées</label>
+            <input type="number" id="heures" min="0" step="1" placeholder="ex. 10" />
+          </div>
+          <div class="form-group">
+            <label for="fraisFixes">Frais fixes (encadrement, etc.)</label>
+            <input type="number" id="fraisFixes" min="0" step="0.01" placeholder="ex. 80" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="marge">Marge / overhead (%)</label>
+          <select id="marge">
+            <option value="0">0%</option>
+            <option value="0.1">10%</option>
+            <option value="0.2" selected>20%</option>
+            <option value="0.3">30%</option>
+          </select>
+        </div>
+
+        <!-- Méthode B -->
+        <h2 class="section-title">Méthode B — Surface × Multiplicateur</h2>
+        <div class="grid-3">
+          <div class="form-group">
+            <label for="typeObjet">Type</label>
+            <select id="typeObjet">
+              <option value="2d" selected>2D (surface)</option>
+              <option value="3d">3D (volume)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="longueur">Longueur (cm)</label>
+            <input type="number" id="longueur" min="0" step="0.1" placeholder="ex. 60" />
+          </div>
+          <div class="form-group">
+            <label for="largeur">Largeur (cm)</label>
+            <input type="number" id="largeur" min="0" step="0.1" placeholder="ex. 80" />
+          </div>
+        </div>
+        <div class="grid-3" id="blocProfondeur" style="display:none">
+          <div class="form-group">
+            <label for="profondeur">Profondeur (cm)</label>
+            <input type="number" id="profondeur" min="0" step="0.1" placeholder="ex. 30" />
+          </div>
+          <div class="form-group">
+            <label for="multCarriere">Multiplicateur carrière</label>
+            <input type="number" id="multCarriere3d" min="0" step="0.01" placeholder="€/cm³" />
+          </div>
+        </div>
+        <div class="grid-3" id="blocCarre">
+          <div class="form-group">
+            <label for="multCarriere">Multiplicateur carrière</label>
+            <input type="number" id="multCarriere" min="0" step="0.01" placeholder="€/cm² (ex. 1.5)" />
+          </div>
+          <div class="form-group">
+            <label for="medium">Médium</label>
+            <select id="medium" title="Coef indicatif par médium">
+              <option value="1">Huile / Acrylique (×1,0)</option>
+              <option value="0.8">Aquarelle / Graphite (×0,8)</option>
+              <option value="0.9">Photographie (×0,9)</option>
+              <option value="1.2">Sculpture (×1,2)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="encadrement">Encadrement / socle</label>
+            <input type="number" id="encadrement" min="0" step="0.01" placeholder="ex. 120" />
+          </div>
+        </div>
+
+        <!-- Options d’édition (facultatif) -->
+        <h2 class="section-title">Édition (facultatif)</h2>
+        <div class="grid-3">
+          <div class="form-group">
+            <label for="editionActive">Édition limitée ?</label>
+            <select id="editionActive">
+              <option value="non" selected>Non</option>
+              <option value="oui">Oui</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editionTirage">Tirage total</label>
+            <input type="number" id="editionTirage" min="1" step="1" placeholder="ex. 8" />
+          </div>
+          <div class="form-group">
+            <label for="editionNumero">N° proposé</label>
+            <input type="number" id="editionNumero" min="1" step="1" placeholder="ex. 3" />
+          </div>
+        </div>
+
+        <button type="submit">Calculer mon prix <span class="arrow">→</span></button>
+      </form>
+
+      <!-- Résultats -->
+      <div id="resultat" class="result-block" hidden>
+        <div class="cards">
+          <div class="card">
+            <h3>Méthode A (Coûts + Temps)</h3>
+            <p class="muted">Couvre vos coûts et votre temps, ajuste la commission et la TVA.</p>
+            <div id="outA"></div>
+          </div>
+          <div class="card">
+            <h3>Méthode B (Surface × Multiplicateur)</h3>
+            <p class="muted">Aligné marché par taille, médium et maturité de carrière.</p>
+            <div id="outB"></div>
+          </div>
+          <div class="card highlight">
+            <h3>Prix conseillé</h3>
+            <p class="muted">Par défaut : le plus élevé des deux. Ajustez selon le contexte.</p>
+            <div id="outFinal"></div>
+          </div>
+        </div>
+
+        <div class="cta-wrap">
+          <button class="btn-secondary" id="cta-pdf" type="button">Télécharger une fiche PDF</button>
+          <button class="btn-secondary" id="cta-contact" type="button">Parler à un conseiller</button>
+        </div>
+      </div>
+
+      <!-- Lead form -->
+      <form id="lead-form" class="lead-form">
+        <h2>Être recontacté par un expert</h2>
+        <input type="email" id="lead-email" placeholder="Email" required />
+        <select id="lead-region" required>
+          <option value="">Votre région</option>
+          <option value="idf">Île-de-France</option>
+          <option value="sud">Sud</option>
+          <option value="nord">Nord</option>
+          <option value="ouest">Ouest</option>
+          <option value="est">Est</option>
+        </select>
+        <select id="lead-exp" required>
+          <option value="">Votre expérience de vente</option>
+          <option value="jamais">Jamais</option>
+          <option value="quelques">Quelques ventes</option>
+          <option value="regulier">Régulier</option>
+        </select>
+        <label class="chk consent"><input type="checkbox" id="lead-rgpd" required> J’accepte d’être contacté(e).</label>
+        <button type="submit">Être rappelé(e)</button>
+      </form>
+    </div>
+
+    <!-- Colonne droite : visuel -->
+    <div class="visual-section">
+      <div class="image-wrapper">
+        <img src="images/joinUs-1.png" alt="Visuel 1" class="art-img art-main" />
+        <img src="images/joinUs-2.png" alt="Visuel 2" class="art-img art-overlay" />
+      </div>
+    </div>
+  </div>
+
+  <script src="dist/main.js"></script>
+</body>
+</html>
